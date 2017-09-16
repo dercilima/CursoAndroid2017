@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">HelloWorld</string>
+    <string name="nome">Nome</string>
+    <string name="telefone">Telefone</string>
+    <string name="data_nascimento">Data nascimento</string>
+    <string name="email">E-mail</string>
+    <string name="endereco">Endereço</string>
+    <string name="cpf">CPF</string>
+    <string name="senha">Senha</string>
+    <string name="finalizar">Finalizar</string>
+</resources>
