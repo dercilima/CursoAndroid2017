@@ -5,4 +5,5 @@
     <string name="nome">Nome</string>
     <string name="assunto">Assunto</string>
     <string name="data">Data</string>
+    <string name="gravar">Gravar</string>
 </resources>

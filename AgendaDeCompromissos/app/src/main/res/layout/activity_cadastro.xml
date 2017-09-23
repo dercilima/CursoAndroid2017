@@ -8,7 +8,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="16dp"
-    tools:context="br.com.dercilima.agendadecompromissos.CadastroActivity">
+    tools:context="br.com.dercilima.agendadecompromissos.views.CadastroActivity">
 
     <TextView
         android:layout_width="wrap_content"
