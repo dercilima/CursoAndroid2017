@@ -2,6 +2,7 @@ package br.com.dercilima.agendadecompromissos.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,7 @@ public class AgendamentosAdapter extends RecyclerView.Adapter<AgendamentosAdapte
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.agendamentos_item, parent, false);
-        MyViewHolder viewHolder = new MyViewHolder(view);
-        return viewHolder;
+        return new MyViewHolder(view);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class AgendamentosAdapter extends RecyclerView.Adapter<AgendamentosAdapte
         }
 
         public void bind(Agendamento agendamento) {
-            textNome.setText(agendamento.getNome());
+            textNome.setText(TextUtils.concat(String.valueOf(agendamento.getId()), " - ", agendamento.getNome()));
             textAssunto.setText(agendamento.getAssunto());
         }
     }

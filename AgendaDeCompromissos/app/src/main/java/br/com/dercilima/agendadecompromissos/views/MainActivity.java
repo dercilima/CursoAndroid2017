@@ -15,6 +15,7 @@ import java.util.List;
 
 import br.com.dercilima.agendadecompromissos.R;
 import br.com.dercilima.agendadecompromissos.adapters.AgendamentosAdapter;
+import br.com.dercilima.agendadecompromissos.controllers.dao.AgendamentoDAO;
 import br.com.dercilima.agendadecompromissos.models.Agendamento;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,12 +49,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        carregarAgendamentos();
     }
 
     private void findById() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+    }
+
+    private void carregarAgendamentos() {
+        // Limpar a lista de agendamentos
+        agendamentos.clear();
+
+        // Carregar os agendamentos do banco de dados
+        agendamentos = new AgendamentoDAO(this).select();
+
+        // Atualizar a lista
+        setupRecyclerView();
     }
 
     @Override
@@ -63,14 +77,17 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
 
-                // Recupera o agendamento
+                /*// Recupera o agendamento
                 Agendamento agendamento = (Agendamento) data.getSerializableExtra("agendamento");
 
                 // Adiciona na lista de agendamentos
                 agendamentos.add(agendamento);
 
                 // Configurar a RecyclerView
-                setupRecyclerView();
+                setupRecyclerView();*/
+
+                // Carregar todos os agendamentos
+                carregarAgendamentos();
 
             } else {
                 Toast.makeText(this, "Cancelado", Toast.LENGTH_LONG).show();

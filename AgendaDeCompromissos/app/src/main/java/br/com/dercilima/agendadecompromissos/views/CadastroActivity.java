@@ -14,6 +14,7 @@ import android.widget.EditText;
 import java.util.Calendar;
 
 import br.com.dercilima.agendadecompromissos.R;
+import br.com.dercilima.agendadecompromissos.controllers.dao.AgendamentoDAO;
 import br.com.dercilima.agendadecompromissos.models.Agendamento;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -90,6 +91,8 @@ public class CadastroActivity extends AppCompatActivity {
         agendamento.setNome(editNome.getText().toString());
         agendamento.setAssunto(editAssunto.getText().toString());
         agendamento.setData(calendario != null ? calendario.getTime() : null);
+
+        new AgendamentoDAO(this).insert(agendamento);
 
         // Retornar o objeto Agendamento para a MainActivity
         Intent dataIntent = new Intent();
