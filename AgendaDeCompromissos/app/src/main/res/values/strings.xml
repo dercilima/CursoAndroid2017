@@ -6,4 +6,5 @@
     <string name="assunto">Assunto</string>
     <string name="data">Data</string>
     <string name="gravar">Gravar</string>
+    <string name="excluir">Excluir</string>
 </resources>

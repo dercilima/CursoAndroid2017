@@ -35,11 +35,13 @@ public class AgendamentoDAO {
     public void insert(Agendamento agendamento) {
         try {
 
-            agendamento.setId(
-                    helper.getWritableDatabase().insertOrThrow(
-                            Agendamento.Columns.TABLE_NAME, null, getContentValues(agendamento)
-                    )
+            // Inserir o Agendamento no Banco de Dados
+            long id = helper.getWritableDatabase().insertOrThrow(
+                    Agendamento.Columns.TABLE_NAME, null, getContentValues(agendamento)
             );
+
+            // Setar id ao agendamento
+            agendamento.setId(id);
 
         } finally {
             helper.close();
@@ -65,6 +67,24 @@ public class AgendamentoDAO {
     }
 
     // update
+    public void update(Agendamento agendamento) {
+        try {
+
+            // Atualizar o registro no banco de dados
+            String whereClause = Agendamento.Columns._ID + " = ?";
+            String[] whereArgs = {String.valueOf(agendamento.getId())};
+
+            helper.getWritableDatabase().update(
+                    Agendamento.Columns.TABLE_NAME,
+                    getContentValues(agendamento),
+                    whereClause,
+                    whereArgs
+            );
+
+        } finally {
+            helper.close();
+        }
+    }
 
     // delete
 

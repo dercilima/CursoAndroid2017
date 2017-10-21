@@ -99,6 +99,13 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Exibir o botão de exluir apenas quando o item já tiver sido gravado no banco de dados
+        menu.findItem(R.id.excluir_menu_item).setVisible(agendamento != null && agendamento.getId() > 0);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
@@ -109,15 +116,34 @@ public class CadastroActivity extends AppCompatActivity {
             case R.id.salvar_menu_item:
                 gravar();
                 return true;
+
+            case R.id.excluir_menu_item:
+                excluir();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void excluir() {
+
+        // Excluir o registro no banco de dados
+
+        // Avisar o usuário
+
+        // Fechar a activity
+
     }
 
     private void gravar() {
 
+        if (agendamento == null) {
+            agendamento = new Agendamento();
+        }
+
         // Carregar os dados da tela para o objeto Agendamento
-        Agendamento agendamento = new Agendamento();
         agendamento.setNome(editNome.getText().toString());
         agendamento.setAssunto(editAssunto.getText().toString());
         try {
@@ -126,7 +152,11 @@ public class CadastroActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        new AgendamentoDAO(this).insert(agendamento);
+        if (agendamento.getId() == 0) {
+            new AgendamentoDAO(this).insert(agendamento);
+        } else {
+            new AgendamentoDAO(this).update(agendamento);
+        }
 
         // Retornar o objeto Agendamento para a MainActivity
         Intent dataIntent = new Intent();
