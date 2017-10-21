@@ -16,6 +16,7 @@ import java.util.List;
 import br.com.dercilima.agendadecompromissos.R;
 import br.com.dercilima.agendadecompromissos.adapters.AgendamentosAdapter;
 import br.com.dercilima.agendadecompromissos.controllers.dao.AgendamentoDAO;
+import br.com.dercilima.agendadecompromissos.listeners.OnRecyclerItemClickListener;
 import br.com.dercilima.agendadecompromissos.models.Agendamento;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,13 +45,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MainActivity.this, CadastroActivity.class);
-                startActivityForResult(intent, RC_CADASTRO);
+                showCadastroAgendamento();
 
             }
         });
 
         carregarAgendamentos();
+    }
+
+    private void showCadastroAgendamento() {
+        showCadastroAgendamento(null);
+    }
+
+    private void showCadastroAgendamento(Agendamento agendamento) {
+        Intent intent = new Intent(this, CadastroActivity.class);
+        // Anexar o agendamento na intent
+        if (agendamento != null) {
+            intent.putExtra("agendamento", agendamento);
+        }
+        startActivityForResult(intent, RC_CADASTRO);
     }
 
     private void findById() {
@@ -105,7 +118,15 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
 
-        mRecyclerView.setAdapter(new AgendamentosAdapter(this, agendamentos));
+        AgendamentosAdapter adapter = new AgendamentosAdapter(this, agendamentos);
+        adapter.setOnRecyclerItemClickListener(new OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Agendamento agendamentoSelected = agendamentos.get(position);
+                showCadastroAgendamento(agendamentoSelected);
+            }
+        });
+        mRecyclerView.setAdapter(adapter);
 
     }
 

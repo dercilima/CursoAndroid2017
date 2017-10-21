@@ -4,14 +4,16 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import br.com.dercilima.agendadecompromissos.R;
 import br.com.dercilima.agendadecompromissos.controllers.dao.AgendamentoDAO;
@@ -23,7 +25,7 @@ public class CadastroActivity extends AppCompatActivity {
     private EditText editAssunto;
     private EditText editData;
 
-    private Calendar calendario;
+    private Agendamento agendamento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +33,22 @@ public class CadastroActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_cadastro);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         findById();
+
+        getDataForIntent();
+
+        showData();
 
         editData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 // Instancia um novo calendário
-                calendario = Calendar.getInstance();
+                final Calendar calendario = Calendar.getInstance();
 
                 // Abre um dialog com um Calendário para selecionar uma data
                 new DatePickerDialog(CadastroActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -47,10 +57,7 @@ public class CadastroActivity extends AppCompatActivity {
 
                         calendario.set(year, month, dayOfMonth);
 
-//                        String dataFormatada = new SimpleDateFormat("dd/MM/yyyy").format(calendario.getTime());
-//                        editData.setText(dataFormatada);
-
-                        String dataFormatada = DateFormat.getMediumDateFormat(CadastroActivity.this).format(calendario.getTime());
+                        String dataFormatada = getDateFormat().format(calendario.getTime());
                         editData.setText(dataFormatada);
 
                     }
@@ -61,9 +68,27 @@ public class CadastroActivity extends AppCompatActivity {
 
     }
 
+    private SimpleDateFormat getDateFormat() {
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    }
+
+    private void getDataForIntent() {
+        if (getIntent().hasExtra("agendamento")) {
+            agendamento = getIntent().getParcelableExtra("agendamento");
+        }
+    }
+
+    private void showData() {
+        if (agendamento != null) {
+            editNome.setText(agendamento.getNome());
+            editAssunto.setText(agendamento.getAssunto());
+            editData.setText(getDateFormat().format(agendamento.getData()));
+        }
+    }
+
     private void findById() {
         editNome = (EditText) findViewById(R.id.edit_nome);
-        editAssunto= (EditText) findViewById(R.id.edit_assunto);
+        editAssunto = (EditText) findViewById(R.id.edit_assunto);
         editData = (EditText) findViewById(R.id.edit_data);
     }
 
@@ -76,9 +101,14 @@ public class CadastroActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.salvar_menu_item) {
-            gravar();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+            case R.id.salvar_menu_item:
+                gravar();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -90,7 +120,11 @@ public class CadastroActivity extends AppCompatActivity {
         Agendamento agendamento = new Agendamento();
         agendamento.setNome(editNome.getText().toString());
         agendamento.setAssunto(editAssunto.getText().toString());
-        agendamento.setData(calendario != null ? calendario.getTime() : null);
+        try {
+            agendamento.setData(getDateFormat().parse(editData.getText().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         new AgendamentoDAO(this).insert(agendamento);
 
