@@ -87,6 +87,22 @@ public class AgendamentoDAO {
     }
 
     // delete
+    public void delete(Agendamento agendamento) {
+        try {
+
+            String whereClause = Agendamento.Columns._ID + " = ?";
+            String[] whereArgs = {String.valueOf(agendamento.getId())};
+
+            helper.getWritableDatabase().delete(
+                    Agendamento.Columns.TABLE_NAME,
+                    whereClause,
+                    whereArgs
+            );
+
+        } finally {
+            helper.close();
+        }
+    }
 
     // select
     public List<Agendamento> select() {

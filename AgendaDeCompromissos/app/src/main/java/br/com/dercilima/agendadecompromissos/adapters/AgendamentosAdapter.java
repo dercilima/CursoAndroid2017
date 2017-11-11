@@ -11,6 +11,7 @@ import java.util.List;
 import br.com.dercilima.agendadecompromissos.R;
 import br.com.dercilima.agendadecompromissos.adapters.holders.AgendamentoHolder;
 import br.com.dercilima.agendadecompromissos.listeners.OnRecyclerItemClickListener;
+import br.com.dercilima.agendadecompromissos.listeners.OnRecyclerItemLongClickListener;
 import br.com.dercilima.agendadecompromissos.models.Agendamento;
 
 /**
@@ -21,7 +22,8 @@ public class AgendamentosAdapter extends RecyclerView.Adapter<AgendamentoHolder>
 
     private Context mContext;
     private List<Agendamento> agendamentos;
-    private OnRecyclerItemClickListener mListener;
+    private OnRecyclerItemClickListener onItemClickListener;
+    private OnRecyclerItemLongClickListener onItemLongClickListener;
 
     public AgendamentosAdapter(Context mContext, List<Agendamento> agendamentos) {
         this.mContext = mContext;
@@ -38,11 +40,16 @@ public class AgendamentosAdapter extends RecyclerView.Adapter<AgendamentoHolder>
     public void onBindViewHolder(AgendamentoHolder holder, int position) {
         Agendamento agendamento = agendamentos.get(position);
         holder.bind(agendamento);
-        holder.setOnRecyclerItemClickListener(mListener);
+        holder.setOnRecyclerItemClickListener(onItemClickListener);
+        holder.setOnItemLongClickListener(onItemLongClickListener);
     }
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
-        mListener = onRecyclerItemClickListener;
+        this.onItemClickListener = onRecyclerItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnRecyclerItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     @Override

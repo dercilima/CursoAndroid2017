@@ -1,8 +1,10 @@
 package br.com.dercilima.agendadecompromissos.views;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import br.com.dercilima.agendadecompromissos.R;
 import br.com.dercilima.agendadecompromissos.adapters.AgendamentosAdapter;
 import br.com.dercilima.agendadecompromissos.controllers.dao.AgendamentoDAO;
 import br.com.dercilima.agendadecompromissos.listeners.OnRecyclerItemClickListener;
+import br.com.dercilima.agendadecompromissos.listeners.OnRecyclerItemLongClickListener;
 import br.com.dercilima.agendadecompromissos.models.Agendamento;
 
 public class MainActivity extends AppCompatActivity {
@@ -90,22 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
 
-                /*// Recupera o agendamento
-                Agendamento agendamento = (Agendamento) data.getSerializableExtra("agendamento");
-
-                // Adiciona na lista de agendamentos
-                agendamentos.add(agendamento);
-
-                // Configurar a RecyclerView
-                setupRecyclerView();*/
-
                 // Carregar todos os agendamentos
                 carregarAgendamentos();
 
-            } else {
-                Toast.makeText(this, "Cancelado", Toast.LENGTH_LONG).show();
             }
-
 
         }
     }
@@ -118,12 +109,39 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
 
-        AgendamentosAdapter adapter = new AgendamentosAdapter(this, agendamentos);
+        final AgendamentosAdapter adapter = new AgendamentosAdapter(this, agendamentos);
         adapter.setOnRecyclerItemClickListener(new OnRecyclerItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 Agendamento agendamentoSelected = agendamentos.get(position);
                 showCadastroAgendamento(agendamentoSelected);
+            }
+        });
+        adapter.setOnItemLongClickListener(new OnRecyclerItemLongClickListener() {
+            @Override
+            public void onItemLongClick(final int position) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.warning)
+                        .setMessage(R.string.confirmar_exclusao_agendamento)
+                        .setPositiveButton(R.string.confirmar, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Excluir no banco de dados
+                                new AgendamentoDAO(MainActivity.this).delete(agendamentos.get(position));
+
+                                // Remover o item da lista de agendamentos que está em memória
+                                agendamentos.remove(position);
+
+                                // Atualizar lista
+                                adapter.notifyItemRemoved(position);
+
+                                // Avisar o usuário
+                                Toast.makeText(MainActivity.this, R.string.agendamento_excluido, Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancelar, null)
+                        .create()
+                        .show();
             }
         });
         mRecyclerView.setAdapter(adapter);

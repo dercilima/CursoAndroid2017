@@ -1,14 +1,17 @@
 package br.com.dercilima.agendadecompromissos.views;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -129,11 +132,28 @@ public class CadastroActivity extends AppCompatActivity {
 
     private void excluir() {
 
-        // Excluir o registro no banco de dados
+        // Pedir confirmação
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setMessage(R.string.confirmar_exclusao_agendamento)
+                .setPositiveButton(R.string.confirmar, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-        // Avisar o usuário
+                        // Excluir o registro no banco de dados
+                        new AgendamentoDAO(CadastroActivity.this).delete(agendamento);
 
-        // Fechar a activity
+                        // Avisar o usuário
+                        Toast.makeText(CadastroActivity.this, R.string.agendamento_excluido, Toast.LENGTH_LONG).show();
+
+                        // Fechar a activity
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancelar, null)
+                .create()
+                .show();
 
     }
 
